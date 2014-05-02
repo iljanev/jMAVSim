@@ -4,8 +4,11 @@ import me.drton.jmavsim.vehicle.AbstractMulticopter;
 import me.drton.jmavsim.vehicle.Quadcopter;
 import org.mavlink.messages.IMAVLinkMessageID;
 
+import javax.swing.*;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
@@ -18,8 +21,14 @@ public class Simulator {
     private int sleepInterval = 10;
     private int visualizerSleepInterval = 20;
     private long nextRun = 0;
+    Target target;
+    MainWindow mainWindow;
 
     public Simulator() throws IOException, InterruptedException {
+        //Create main window
+        mainWindow = new MainWindow(uiCommandListener);
+        mainWindow.show();
+
         // Create world
         world = new World();
         // Create MAVLink connections
@@ -66,21 +75,24 @@ public class Simulator {
         // SysId should be the same as autopilot, ComponentId should be different!
         connHIL.addNode(new MAVLinkHILSystem(1, 51, vehicle));
         world.addObject(vehicle);
-        Target target = new Target(world, 0.3);
+        target = new Target(world, 0.3);
         target.setMass(90.0);
         target.initGPS(55.753395, 37.625427);
         target.getPosition().set(5, 0, -5);
         connCommon.addNode(new MAVLinkTargetSystem(2, 1, target));
         world.addObject(target);
         // Create visualizer
-        visualizer = new Visualizer(world);
+        visualizer = new Visualizer(world, mainWindow.canvas3D);
         visualizer.setViewerTarget(target);
         visualizer.setViewerPosition(gimbal);
+        //visualizer.setViewerPosition(vehicle);
         visualizer.setAutoRotate(false);
+        //visualizer.setAutoRotate(true);
         // Open ports
-        serialMAVLinkPort.open("/dev/tty.usbmodem1", 230400, 8, 1, 0);
+        serialMAVLinkPort.open("COM5", 230400, 8, 1, 0);
         serialMAVLinkPort.sendRaw("\nsh /etc/init.d/rc.usb\n".getBytes());
         udpMavLinkPort.open(new InetSocketAddress(14555));
+
         // Run
         try {
             run();
@@ -91,6 +103,30 @@ public class Simulator {
         serialMAVLinkPort.close();
         udpMavLinkPort.close();
     }
+
+    private double moveForce = 40;
+    //target.setMoving(true);
+    public ActionListener uiCommandListener = new ActionListener(){
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            String cmd = actionEvent.getActionCommand();
+            if (cmd.equals("start")) {
+                target.setMoving(true);
+            } else if (cmd.equals("stop")) {
+                target.setMoving(false);
+                target.setXForce(0);
+                target.setYForce(0);
+            } else if (cmd.equals("X")) {
+                target.setXForce(moveForce);
+            } else if (cmd.equals("-X")) {
+                target.setXForce(-moveForce);
+            } else if (cmd.equals("Y")) {
+                target.setYForce(moveForce);
+            } else if (cmd.equals("-Y")) {
+                target.setYForce(-moveForce);
+            }
+        }
+    };
 
     public void run() throws IOException, InterruptedException {
         new Thread(new Runnable() {

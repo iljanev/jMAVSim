@@ -4,6 +4,8 @@ import com.sun.j3d.utils.geometry.Sphere;
 import com.sun.j3d.utils.image.TextureLoader;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
+import com.sun.j3d.exp.swing.JCanvas3D;
+
 import javax.media.j3d.*;
 import javax.vecmath.*;
 
@@ -21,9 +23,10 @@ public class Visualizer {
     private MechanicalObject viewerPosition;
     private boolean autoRotate = true;
 
-    public Visualizer(World world) {
+    public Visualizer(World world, JCanvas3D canvas) {
         this.world = world;
-        universe = new SimpleUniverse();
+        Canvas3D c = canvas.getOffscreenCanvas3D();
+        universe = new SimpleUniverse(c);
         universe.getViewer().getView().setBackClipDistance(100000.0);
         createEnvironment();
         for (WorldObject object : world.getObjects()) {

@@ -12,6 +12,9 @@ public class Target extends VisualObject {
     protected long startTime = -1;
     public double dragMove = 0.2;
     private GlobalPositionProjector gpsProjector = new GlobalPositionProjector();
+    private boolean isMoving = false;
+    private double xForce = 0;
+    private double yForce = 0;
 
     public Target(World world, double size) throws FileNotFoundException {
         super(world);
@@ -23,17 +26,32 @@ public class Target extends VisualObject {
         gpsProjector.init(lat, lon);
     }
 
+
+
     @Override
     protected Vector3d getForce() {
-        if (startTime < 0)
-            startTime = lastTime;
         Vector3d f = new Vector3d(velocity);
-        f.scale(-f.length() * dragMove);
+        //f.scale(-f.length() * dragMove);
         Vector3d mg = new Vector3d(getWorld().getEnvironment().getG());
         mg.scale(-mass);
         f.add(mg);
-        if (lastTime - startTime > 60000)
-            f.add(new Vector3d(0.0, Math.exp(-position.length() / 700.0) * mass * 9.81 * 0.025, 0.0));
+        if (isMoving()){
+            f.setX(xForce);
+            f.setY(yForce);
+        }
+        else {
+            //break;
+            f.setX(-velocity.getX()*50);
+            f.setY(-velocity.getY()*50);
+        }
+//        f.scale(-f.length() * dragMove);
+//        Vector3d mg = new Vector3d(getWorld().getEnvironment().getG());
+//        mg.scale(-mass);
+//        f.add(mg);
+//        if (isMoving())
+//            f.add(new Vector3d(0.0, Math.exp(-position.length() / 700.0) * mass * 9.81 * 0.025, 0.0));
+
+        //System.out.printf("x=%s y=%s z=%s%n", xForce, yForce, f.getZ());
         return f;
     }
 
@@ -54,5 +72,29 @@ public class Target extends VisualObject {
         gps.ve = getVelocity().y;
         gps.vd = getVelocity().z;
         return gps;
+    }
+
+    public boolean isMoving() {
+        return isMoving;
+    }
+
+    public void setMoving(boolean isMoving) {
+        this.isMoving = isMoving;
+    }
+
+    public double getXForce() {
+        return xForce;
+    }
+
+    public void setXForce(double xForce) {
+        this.xForce = xForce;
+    }
+
+    public double getYForce() {
+        return yForce;
+    }
+
+    public void setYForce(double yForce) {
+        this.yForce = yForce;
     }
 }
