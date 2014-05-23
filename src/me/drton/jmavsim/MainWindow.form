@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="me.drton.jmavsim.MainWindow">
+  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties>
+      <preferredSize width="600" height="400"/>
+      <requestFocusEnabled value="true"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <grid id="d8eb1" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+        <constraints border-constraint="North"/>
+        <properties>
+          <enabled value="false"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="79ae2" class="javax.swing.JButton" binding="btn_Start">
+            <constraints/>
+            <properties>
+              <actionCommand value="start"/>
+              <horizontalAlignment value="2"/>
+              <text value="Start"/>
+            </properties>
+          </component>
+          <component id="2eb38" class="javax.swing.JButton" binding="btn_Stop">
+            <constraints/>
+            <properties>
+              <actionCommand value="stop"/>
+              <text value="Stop"/>
+            </properties>
+          </component>
+          <component id="83e76" class="javax.swing.JButton" binding="xButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="X"/>
+            </properties>
+          </component>
+          <component id="cda67" class="javax.swing.JButton" binding="xButton1" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="-X"/>
+            </properties>
+          </component>
+          <component id="7ea23" class="javax.swing.JButton" binding="yButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="Y"/>
+            </properties>
+          </component>
+          <component id="1b1eb" class="javax.swing.JButton" binding="yButton1" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="-Y"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="cf4a8" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="5a107" class="com.sun.j3d.exp.swing.JCanvas3D" binding="canvas3D" custom-create="true">
+            <constraints border-constraint="Center"/>
+            <properties/>
+          </component>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

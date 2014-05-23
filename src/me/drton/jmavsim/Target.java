@@ -12,6 +12,9 @@ import java.io.FileNotFoundException;
  */
 public class Target extends KinematicObject {
     private GlobalPositionProjector gpsProjector = new GlobalPositionProjector();
+    private boolean isMoving = false;
+    private double xForce = 0;
+    private double yForce = 0;
 
     public Target(World world, double size) throws FileNotFoundException {
         super(world);
@@ -35,5 +38,29 @@ public class Target extends KinematicObject {
         gps.epv = 1.0;
         gps.velocity = getVelocity();
         return gps;
+    }
+
+    public boolean isMoving() {
+        return isMoving;
+    }
+
+    public void setMoving(boolean isMoving) {
+        this.isMoving = isMoving;
+    }
+
+    public double getXForce() {
+        return xForce;
+    }
+
+    public void setXForce(double xForce) {
+        this.xForce = xForce;
+    }
+
+    public double getYForce() {
+        return yForce;
+    }
+
+    public void setYForce(double yForce) {
+        this.yForce = yForce;
     }
 }

@@ -187,11 +187,18 @@
     <library name="lib">
       <CLASSES>
         <root url="file://$PROJECT_DIR$/lib" />
+        <root url="jar://D:/Users/Ilja/Downloads/j3d-1_5_2-windows-i586/j3d-jre/lib/ext/j3dcore.jar!/" />
+        <root url="jar://D:/Users/Ilja/Downloads/j3d-1_5_2-windows-i586/j3d-jre/lib/ext/j3dutils.jar!/" />
+        <root url="jar://D:/Users/Ilja/Downloads/j3d-1_5_2-windows-i586/j3d-jre/lib/ext/vecmath.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />
       <jarDirectory url="file://$PROJECT_DIR$/lib" recursive="false" />
     </library>
+  </component>
+  <component name="uidesigner-configuration">
+    <option name="INSTRUMENT_CLASSES" value="false" />
+    <option name="DEFAULT_LAYOUT_MANAGER" value="BorderLayout" />
   </component>
 </project>
 
