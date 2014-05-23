@@ -77,11 +77,24 @@ public class Simulator {
         world.addObject(vehicle);
 
         // Create target
-        SimpleTarget target = new SimpleTarget(world, 0.3);
-        long t = System.currentTimeMillis();
-        target.setTrajectory(new Vector3d(5.0, 0.0, -2.0), new Vector3d(5.0, 100.0, -2.0), t + 20000, t + 50000);
-        connCommon.addNode(new MAVLinkTargetSystem(2, 1, target));
-        world.addObject(target);
+//        SimpleTarget target = new SimpleTarget(world, "models/biped.obj");
+//
+//        long t = System.currentTimeMillis();
+//        target.setTrajectory(new Vector3d(5.0, 0.0, 0), new Vector3d(5.0, 100.0, 0), t + 20000, t + 50000);
+//        connCommon.addNode(new MAVLinkTargetSystem(2, 1, target));
+//        world.addObject(target);
+
+        LogPlayerTarget target2 = new LogPlayerTarget(world, 0.3);
+
+        try {
+            target2.openLog("logs/01.bin");
+        } catch (Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        long t2 = System.currentTimeMillis();
+        target2.setTimeStart(t2 + 20000);
+        connCommon.addNode(new MAVLinkTargetSystem(2, 1, target2));
+        world.addObject(target2);
 
         // Create visualizer
         visualizer = new Visualizer(world);
@@ -96,16 +109,18 @@ public class Simulator {
         gimbal.setPitchChannel(4);
         gimbal.setPitchScale(1.57); // +/- 90deg
         world.addObject(gimbal);
-        visualizer.setViewerPositionObject(gimbal);      // With gimbal
+        visualizer.setViewerPositionObject(vehicle);      // With gimbal
+        visualizer.setViewerTargetObject(target2);
         // Put camera on static point and point to vehicle
         /*
         visualizer.setViewerPosition(new Vector3d(-5.0, 0.0, -1.7));
         visualizer.setViewerTargetObject(vehicle);
         visualizer.setAutoRotate(true);
         */
+        visualizer.setAutoRotate(true);
 
         // Open ports
-        serialMAVLinkPort.open("/dev/tty.usbmodem1", 230400, 8, 1, 0);
+        serialMAVLinkPort.open("COM5", 230400, 8, 1, 0);
         serialMAVLinkPort.sendRaw("\nsh /etc/init.d/rc.usb\n".getBytes());
         udpMavLinkPort.open(new InetSocketAddress(14555));
 

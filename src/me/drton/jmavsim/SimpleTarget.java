@@ -16,6 +16,10 @@ public class SimpleTarget extends Target {
         super(world, size);
     }
 
+    public SimpleTarget(World world, String modelFile) throws FileNotFoundException {
+        super(world, modelFile);
+    }
+
     public void setTrajectory(Vector3d positionStart, Vector3d positionFinish, long timeStart, long timeFinish) {
         this.positionStart = positionStart;
         this.positionFinish = positionFinish;

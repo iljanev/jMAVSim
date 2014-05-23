@@ -24,6 +24,9 @@ public class LogPlayerTarget extends Target {
     public LogPlayerTarget(World world, double size) throws FileNotFoundException {
         super(world, size);
     }
+    public LogPlayerTarget(World world, String modelFile) throws FileNotFoundException {
+        super(world, modelFile);
+    }
 
     void openLog(String fileName) throws IOException, FormatErrorException {
         logReader = new PX4LogReader(fileName);

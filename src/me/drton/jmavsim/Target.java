@@ -20,6 +20,12 @@ public class Target extends KinematicObject {
         gpsProjector.init(world.getGlobalReference());
     }
 
+    public Target(World world, String modelFile) throws FileNotFoundException {
+        super(world);
+        modelFromFile(modelFile);
+        gpsProjector.init(world.getGlobalReference());
+    }
+
     public GlobalPositionVelocity getGlobalPosition() {
         Vector3d pos = getPosition();
         LatLonAlt latLonAlt = gpsProjector.reproject(new double[]{pos.x, pos.y, pos.z});
