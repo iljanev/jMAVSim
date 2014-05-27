@@ -4,7 +4,11 @@ import com.sun.j3d.utils.geometry.Sphere;
 import me.drton.jmavlib.geo.GlobalPositionProjector;
 import me.drton.jmavlib.geo.LatLonAlt;
 
+import javax.media.j3d.Appearance;
+import javax.media.j3d.Material;
+import javax.vecmath.Color3f;
 import javax.vecmath.Vector3d;
+import java.awt.*;
 import java.io.FileNotFoundException;
 
 /**
@@ -17,6 +21,12 @@ public class Target extends KinematicObject {
     public Target(World world, double size) throws FileNotFoundException {
         super(world);
         Sphere sphere = new Sphere((float) size);
+        Color color = Color.RED;
+
+        Appearance ap = sphere.getAppearance();
+        Material mat = ap.getMaterial();
+        mat.setDiffuseColor(new Color3f(color));
+
         transformGroup.addChild(sphere);
         gpsProjector.init(world.getGlobalReference());
     }

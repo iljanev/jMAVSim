@@ -43,7 +43,9 @@ public abstract class KinematicObject extends WorldObject {
      */
     protected void modelFromFile(String modelFile) throws FileNotFoundException {
         ObjectFile objectFile = new ObjectFile();
+        objectFile.setFlags(ObjectFile.LOAD_ALL);
         Scene scene = objectFile.load(modelFile);
+
         transformGroup.addChild(scene.getSceneGroup());
     }
 

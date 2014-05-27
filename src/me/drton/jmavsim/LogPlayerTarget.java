@@ -62,7 +62,7 @@ public class LogPlayerTarget extends Target {
                     logData.containsKey("LPOS.Y") &&
                     logData.containsKey("LPOS.Z")) {
                 position.add(new Vector3d((Float) logData.get("LPOS.X"), (Float) logData.get("LPOS.Y"),
-                        (Float) logData.get("LPOS.Z")), positionOffset);
+                         0), positionOffset);
             }
             if (logData.containsKey("LPOS.VX") &&
                     logData.containsKey("LPOS.VY") &&

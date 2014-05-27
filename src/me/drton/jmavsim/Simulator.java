@@ -34,7 +34,9 @@ public class Simulator {
 
         // Create world
         world = new World();
-        world.setGlobalReference(new LatLonAlt(55.753395, 37.625427, 0.0));
+        //world.setGlobalReference(new LatLonAlt(55.753395, 37.625427, 0.0));
+        world.setGlobalReference(new LatLonAlt(56.9654307, 24.1298169, 0.0));
+
 
         // Create MAVLink connections
         MAVLinkConnection connHIL = new MAVLinkConnection(world);
@@ -95,27 +97,23 @@ public class Simulator {
 //        connCommon.addNode(new MAVLinkTargetSystem(2, 1, target));
 //        world.addObject(target);
 
-//        target = new Target(world, "models/biped.obj");
-//
+
+//        target = new MovableTarget(world, "models/bmw.obj");
+//        target.position = new Vector3d(5.0, 0.0, 0);
 //        connCommon.addNode(new MAVLinkTargetSystem(2, 1, target));
 //        world.addObject(target);
 
-        target = new MovableTarget(world, "models/bmw.obj");
-        target.position = new Vector3d(5.0, 0.0, 0);
+        target = new LogPlayerTarget(world, "models/biped.obj");
+
+        try {
+            ((LogPlayerTarget)target).openLog("logs/03.bin");
+        } catch (Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        long t = System.currentTimeMillis();
+        ((LogPlayerTarget)target).setTimeStart(t + 60000);
         connCommon.addNode(new MAVLinkTargetSystem(2, 1, target));
         world.addObject(target);
-
-//        LogPlayerTarget target2 = new LogPlayerTarget(world, 0.3);
-//
-//        try {
-//            target2.openLog("logs/01.bin");
-//        } catch (Exception ex){
-//            System.err.println(ex.getMessage());
-//        }
-//        long t2 = System.currentTimeMillis();
-//        target2.setTimeStart(t2 + 20000);
-//        connCommon.addNode(new MAVLinkTargetSystem(2, 1, target2));
-//        world.addObject(target2);
 
         // Create visualizer
         visualizer = new Visualizer(world, mainWindow.canvas3D);
@@ -130,7 +128,7 @@ public class Simulator {
         gimbal.setPitchChannel(4);
         gimbal.setPitchScale(1.57); // +/- 90deg
         world.addObject(gimbal);
-        visualizer.setViewerPositionObject(vehicle);      // With gimbal
+        visualizer.setViewerPositionObject(gimbal);      // With gimbal
         visualizer.setViewerTargetObject(target);
         // Put camera on static point and point to vehicle
         /*
@@ -138,7 +136,7 @@ public class Simulator {
         visualizer.setViewerTargetObject(vehicle);
         visualizer.setAutoRotate(true);
         */
-        visualizer.setAutoRotate(true);
+        //visualizer.setAutoRotate(true);
         // Open ports
         serialMAVLinkPort.open("COM5", 230400, 8, 1, 0);
         serialMAVLinkPort.sendRaw("\nsh /etc/init.d/rc.usb\n".getBytes());
