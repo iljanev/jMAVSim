@@ -3,6 +3,8 @@ package me.drton.jmavsim;
 import com.sun.j3d.exp.swing.JCanvas3D;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,8 +22,10 @@ public class MainWindow {
     private JButton xButton1;
     private JButton yButton;
     private JButton yButton1;
+    private JSlider xSlider;
+    private JSlider ySlider;
 
-    public MainWindow(ActionListener uiCommandListener) {
+    public MainWindow(ActionListener uiCommandListener, ChangeListener xChangeListener, ChangeListener yChangeListener) {
         frame = new JFrame("Mav Simulator");
         $$$setupUI$$$();
         frame.setContentPane(panel1);
@@ -33,6 +37,8 @@ public class MainWindow {
         xButton1.addActionListener(uiCommandListener);
         yButton.addActionListener(uiCommandListener);
         yButton1.addActionListener(uiCommandListener);
+        xSlider.addChangeListener(xChangeListener);
+        ySlider.addChangeListener(yChangeListener);
     }
 
     public void show() {
@@ -82,6 +88,16 @@ public class MainWindow {
         yButton1 = new JButton();
         yButton1.setText("-Y");
         panel2.add(yButton1);
+        xSlider = new JSlider();
+        xSlider.setMinimum(-100);
+        xSlider.setValue(0);
+        xSlider.putClientProperty("JSlider.isFilled", Boolean.FALSE);
+        panel2.add(xSlider);
+        ySlider = new JSlider();
+        ySlider.setMinimum(-100);
+        ySlider.setValue(0);
+        ySlider.putClientProperty("JSlider.isFilled", Boolean.FALSE);
+        panel2.add(ySlider);
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new BorderLayout(0, 0));
         panel1.add(panel3, BorderLayout.CENTER);

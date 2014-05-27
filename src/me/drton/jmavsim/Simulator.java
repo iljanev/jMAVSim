@@ -6,6 +6,8 @@ import me.drton.jmavsim.vehicle.Quadcopter;
 import org.mavlink.messages.IMAVLinkMessageID;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 import java.awt.event.ActionEvent;
@@ -27,7 +29,7 @@ public class Simulator {
 
     public Simulator() throws IOException, InterruptedException {
         //Create main window
-        mainWindow = new MainWindow(uiCommandListener);
+        mainWindow = new MainWindow(uiCommandListener, xChangeListener, yChangeListener);
         mainWindow.show();
 
         // Create world
@@ -86,24 +88,34 @@ public class Simulator {
         world.addObject(vehicle);
 
         // Create target
-//        SimpleTarget target = new SimpleTarget(world, "models/biped.obj");
+//        target = new SimpleTarget(world, "models/biped.obj");
 //
 //        long t = System.currentTimeMillis();
-//        target.setTrajectory(new Vector3d(5.0, 0.0, 0), new Vector3d(5.0, 100.0, 0), t + 20000, t + 50000);
+//        ((SimpleTarget)target).setTrajectory(new Vector3d(5.0, 0.0, 0), new Vector3d(5.0, 100.0, 0), t + 20000, t + 50000);
 //        connCommon.addNode(new MAVLinkTargetSystem(2, 1, target));
 //        world.addObject(target);
 
-        LogPlayerTarget target2 = new LogPlayerTarget(world, 0.3);
+//        target = new Target(world, "models/biped.obj");
+//
+//        connCommon.addNode(new MAVLinkTargetSystem(2, 1, target));
+//        world.addObject(target);
 
-        try {
-            target2.openLog("logs/01.bin");
-        } catch (Exception ex){
-            System.err.println(ex.getMessage());
-        }
-        long t2 = System.currentTimeMillis();
-        target2.setTimeStart(t2 + 20000);
-        connCommon.addNode(new MAVLinkTargetSystem(2, 1, target2));
-        world.addObject(target2);
+        target = new MovableTarget(world, "models/bmw.obj");
+        target.position = new Vector3d(5.0, 0.0, 0);
+        connCommon.addNode(new MAVLinkTargetSystem(2, 1, target));
+        world.addObject(target);
+
+//        LogPlayerTarget target2 = new LogPlayerTarget(world, 0.3);
+//
+//        try {
+//            target2.openLog("logs/01.bin");
+//        } catch (Exception ex){
+//            System.err.println(ex.getMessage());
+//        }
+//        long t2 = System.currentTimeMillis();
+//        target2.setTimeStart(t2 + 20000);
+//        connCommon.addNode(new MAVLinkTargetSystem(2, 1, target2));
+//        world.addObject(target2);
 
         // Create visualizer
         visualizer = new Visualizer(world, mainWindow.canvas3D);
@@ -119,7 +131,7 @@ public class Simulator {
         gimbal.setPitchScale(1.57); // +/- 90deg
         world.addObject(gimbal);
         visualizer.setViewerPositionObject(vehicle);      // With gimbal
-        visualizer.setViewerTargetObject(target2);
+        visualizer.setViewerTargetObject(target);
         // Put camera on static point and point to vehicle
         /*
         visualizer.setViewerPosition(new Vector3d(-5.0, 0.0, -1.7));
@@ -144,29 +156,63 @@ public class Simulator {
         udpMavLinkPort.close();
     }
 
-    private double moveForce = 40;
+    private float moveForce = 0.05f;
     //target.setMoving(true);
     public ActionListener uiCommandListener = new ActionListener(){
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             String cmd = actionEvent.getActionCommand();
-            if (cmd.equals("start")) {
-                target.setMoving(true);
-            } else if (cmd.equals("stop")) {
-                target.setMoving(false);
-                target.setXForce(0);
-                target.setYForce(0);
-            } else if (cmd.equals("X")) {
-                target.setXForce(moveForce);
-            } else if (cmd.equals("-X")) {
-                target.setXForce(-moveForce);
-            } else if (cmd.equals("Y")) {
-                target.setYForce(moveForce);
-            } else if (cmd.equals("-Y")) {
-                target.setYForce(-moveForce);
+            if (target instanceof MovableTarget){
+                MovableTarget movableTarget = (MovableTarget) target;
+                if (cmd.equals("start")) {
+                    target.setMoving(true);
+                } else if (cmd.equals("stop")) {
+                    movableTarget.setX(0);
+                    movableTarget.setY(0);
+                    target.setMoving(false);
+                } else if (cmd.equals("X")) {
+                    movableTarget.setX(movableTarget.getX() + moveForce);
+                } else if (cmd.equals("-X")) {
+                    movableTarget.setX(movableTarget.getX() - moveForce);
+                } else if (cmd.equals("Y")) {
+                    movableTarget.setY(movableTarget.getY() + moveForce);
+                } else if (cmd.equals("-Y")) {
+                    movableTarget.setY(movableTarget.getY() - moveForce);
+                }
             }
         }
     };
+
+    public ChangeListener xChangeListener = new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent changeEvent) {
+            if (target instanceof MovableTarget) {
+                MovableTarget movableTarget = (MovableTarget) target;
+                if (changeEvent != null && changeEvent.getSource() instanceof JSlider) {
+                    JSlider xSlider = (JSlider) changeEvent.getSource();
+                    ;
+                    movableTarget.setX(xSlider.getValue() / 100.0f);
+                }
+            }
+        }
+    };
+    public ChangeListener yChangeListener = new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent changeEvent) {
+            if (target instanceof MovableTarget) {
+                MovableTarget movableTarget = (MovableTarget) target;
+                if (changeEvent != null && changeEvent.getSource() instanceof JSlider) {
+                    JSlider xSlider = (JSlider) changeEvent.getSource();
+                    ;
+                    movableTarget.setY(xSlider.getValue() / 100.0f);
+                }
+            }
+        }
+    };
+
+    private void changeSliderValue(){
+
+    }
 
     public void run() throws IOException, InterruptedException {
         new Thread(new Runnable() {

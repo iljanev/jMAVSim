@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="me.drton.jmavsim.MainWindow">
   <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
-      <xy x="20" y="20" width="500" height="400"/>
+      <xy x="20" y="20" width="824" height="400"/>
     </constraints>
     <properties>
       <preferredSize width="600" height="400"/>
@@ -55,6 +55,26 @@
             <properties>
               <text value="-Y"/>
             </properties>
+          </component>
+          <component id="c691" class="javax.swing.JSlider" binding="xSlider">
+            <constraints/>
+            <properties>
+              <minimum value="-100"/>
+              <value value="0"/>
+            </properties>
+            <clientProperties>
+              <JSlider.isFilled class="java.lang.Boolean" value="false"/>
+            </clientProperties>
+          </component>
+          <component id="a6a85" class="javax.swing.JSlider" binding="ySlider">
+            <constraints/>
+            <properties>
+              <minimum value="-100"/>
+              <value value="0"/>
+            </properties>
+            <clientProperties>
+              <JSlider.isFilled class="java.lang.Boolean" value="false"/>
+            </clientProperties>
           </component>
         </children>
       </grid>
