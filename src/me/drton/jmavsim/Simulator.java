@@ -89,11 +89,14 @@ public class Simulator {
         connHIL.addNode(new MAVLinkHILSystem(1, 51, vehicle));
         world.addObject(vehicle);
 
+        int startSeconds = 100;
+        int lengthSeconds = 150;
+
         // Create target
 //        target = new SimpleTarget(world, "models/biped.obj");
 //
 //        long t = System.currentTimeMillis();
-//        ((SimpleTarget)target).setTrajectory(new Vector3d(5.0, 0.0, 0), new Vector3d(5.0, 100.0, 0), t + 20000, t + 50000);
+//        ((SimpleTarget)target).setTrajectory(new Vector3d(5.0, 0.0, -2.0), new Vector3d(5.0, 600.0, -2.0), t + startSeconds*1000, t + (startSeconds + lengthSeconds)*1000);
 //        connCommon.addNode(new MAVLinkTargetSystem(2, 1, target));
 //        world.addObject(target);
 
@@ -111,9 +114,10 @@ public class Simulator {
             System.err.println(ex.getMessage());
         }
         long t = System.currentTimeMillis();
-        ((LogPlayerTarget)target).setTimeStart(t + 60000);
+        ((LogPlayerTarget)target).setTimeStart(t + startSeconds*1000);
         connCommon.addNode(new MAVLinkTargetSystem(2, 1, target));
         world.addObject(target);
+        ((LogPlayerTarget) target).setPositionOffset(new Vector3d(-10,10,-1.2f));
 
         // Create visualizer
         visualizer = new Visualizer(world, mainWindow.canvas3D);

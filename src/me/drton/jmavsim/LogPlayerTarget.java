@@ -19,6 +19,7 @@ public class LogPlayerTarget extends Target {
     private long logStart = 0;
     private long timeStart = 0;
     private long logT = 0;
+    long logLength = 0;
     private Vector3d positionOffset = new Vector3d();
 
     public LogPlayerTarget(World world, double size) throws FileNotFoundException {
@@ -31,6 +32,7 @@ public class LogPlayerTarget extends Target {
     void openLog(String fileName) throws IOException, FormatErrorException {
         logReader = new PX4LogReader(fileName);
         logStart = logReader.getStartMicroseconds() / 1000;
+        logLength = logStart + logReader.getSizeMicroseconds() / 1000;
     }
 
     public void setTimeStart(long timeStart) {
@@ -43,12 +45,14 @@ public class LogPlayerTarget extends Target {
 
     @Override
     public void update(long t) {
+        boolean log_ended = false;
         if (logReader != null) {
             Map<String, Object> logData = new HashMap<String, Object>();
             while (timeStart - logStart + logT < t) {
                 try {
                     logT = logReader.readUpdate(logData) / 1000;
                 } catch (EOFException e) {
+                    log_ended = true;
                     break;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -69,6 +73,16 @@ public class LogPlayerTarget extends Target {
                     logData.containsKey("LPOS.VZ")) {
                 velocity.set((Float) logData.get("LPOS.VX"), (Float) logData.get("LPOS.VY"),
                         (Float) logData.get("LPOS.VZ"));
+            }
+
+            //loop log play
+            if (log_ended){
+                log_ended = false;
+                logT = 0;
+                setTimeStart(System.currentTimeMillis());
+                try {
+                    logReader.seek(0);
+                }catch(Exception ex){}
             }
         }
         super.update(t);
