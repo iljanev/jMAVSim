@@ -21,7 +21,7 @@ public class msg_global_position_time extends MAVLinkMessage {
     messageType = MAVLINK_MSG_ID_GLOBAL_POSITION_TIME;
     this.sysId = sysId;
     this.componentId = componentId;
-    length = 34;
+    length = 38;
 }
 
   /**
@@ -53,6 +53,14 @@ public class msg_global_position_time extends MAVLinkMessage {
    */
   public float vz;
   /**
+   * Error position horizontal
+   */
+  public int eph;
+  /**
+   * Error position vertical
+   */
+  public int epv;
+  /**
    * Compass heading in degrees * 100, 0.0..359.99 degrees. If unknown, set to: UINT16_MAX
    */
   public int hdg;
@@ -67,13 +75,15 @@ public void decode(LittleEndianDataInputStream dis) throws IOException {
   vx = (float)dis.readFloat();
   vy = (float)dis.readFloat();
   vz = (float)dis.readFloat();
+  eph = (int)dis.readUnsignedShort()&0x00FFFF;
+  epv = (int)dis.readUnsignedShort()&0x00FFFF;
   hdg = (int)dis.readUnsignedShort()&0x00FFFF;
 }
 /**
  * Encode message with raw data and other informations
  */
 public byte[] encode() throws IOException {
-  byte[] buffer = new byte[8+34];
+  byte[] buffer = new byte[8+38];
    LittleEndianDataOutputStream dos = new LittleEndianDataOutputStream(new ByteArrayOutputStream());
   dos.writeByte((byte)0xFE);
   dos.writeByte(length & 0x00FF);
@@ -88,18 +98,20 @@ public byte[] encode() throws IOException {
   dos.writeFloat(vx);
   dos.writeFloat(vy);
   dos.writeFloat(vz);
+  dos.writeShort(eph&0x00FFFF);
+  dos.writeShort(epv&0x00FFFF);
   dos.writeShort(hdg&0x00FFFF);
   dos.flush();
   byte[] tmp = dos.toByteArray();
   for (int b=0; b<tmp.length; b++) buffer[b]=tmp[b];
-  int crc = MAVLinkCRC.crc_calculate_encode(buffer, 34);
+  int crc = MAVLinkCRC.crc_calculate_encode(buffer, 38);
   crc = MAVLinkCRC.crc_accumulate((byte) IMAVLinkCRC.MAVLINK_MESSAGE_CRCS[messageType], crc);
   byte crcl = (byte) (crc & 0x00FF);
   byte crch = (byte) ((crc >> 8) & 0x00FF);
-  buffer[40] = crcl;
-  buffer[41] = crch;
+  buffer[44] = crcl;
+  buffer[45] = crch;
   return buffer;
 }
 public String toString() {
-return "MAVLINK_MSG_ID_GLOBAL_POSITION_TIME : " +   "  time="+time+  "  lat="+lat+  "  lon="+lon+  "  alt="+alt+  "  vx="+vx+  "  vy="+vy+  "  vz="+vz+  "  hdg="+hdg;}
+return "MAVLINK_MSG_ID_GLOBAL_POSITION_TIME : " +   "  time="+time+  "  lat="+lat+  "  lon="+lon+  "  alt="+alt+  "  vx="+vx+  "  vy="+vy+  "  vz="+vz+  "  eph="+eph+  "  epv="+epv+  "  hdg="+hdg;}
 }
