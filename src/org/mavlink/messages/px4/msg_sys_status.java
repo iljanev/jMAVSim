@@ -21,7 +21,7 @@ public class msg_sys_status extends MAVLinkMessage {
     messageType = MAVLINK_MSG_ID_SYS_STATUS;
     this.sysId = sysId;
     this.componentId = componentId;
-    length = 31;
+    length = 33;
 }
 
   /**
@@ -48,6 +48,10 @@ public class msg_sys_status extends MAVLinkMessage {
    * Battery current, in 10*milliamperes (1 = 10 milliampere), -1: autopilot does not measure the current
    */
   public int current_battery;
+  /**
+   * Battery used mah
+   */
+  public int battery_discharged_mah;
   /**
    * Communication drops in percent, (0%: 0, 100%: 10'000), (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)
    */
@@ -86,6 +90,7 @@ public void decode(LittleEndianDataInputStream dis) throws IOException {
   load = (int)dis.readUnsignedShort()&0x00FFFF;
   voltage_battery = (int)dis.readUnsignedShort()&0x00FFFF;
   current_battery = (int)dis.readShort();
+  battery_discharged_mah = (int)dis.readUnsignedShort()&0x00FFFF;
   drop_rate_comm = (int)dis.readUnsignedShort()&0x00FFFF;
   errors_comm = (int)dis.readUnsignedShort()&0x00FFFF;
   errors_count1 = (int)dis.readUnsignedShort()&0x00FFFF;
@@ -98,7 +103,7 @@ public void decode(LittleEndianDataInputStream dis) throws IOException {
  * Encode message with raw data and other informations
  */
 public byte[] encode() throws IOException {
-  byte[] buffer = new byte[8+31];
+  byte[] buffer = new byte[8+33];
    LittleEndianDataOutputStream dos = new LittleEndianDataOutputStream(new ByteArrayOutputStream());
   dos.writeByte((byte)0xFE);
   dos.writeByte(length & 0x00FF);
@@ -112,6 +117,7 @@ public byte[] encode() throws IOException {
   dos.writeShort(load&0x00FFFF);
   dos.writeShort(voltage_battery&0x00FFFF);
   dos.writeShort(current_battery&0x00FFFF);
+  dos.writeShort(battery_discharged_mah&0x00FFFF);
   dos.writeShort(drop_rate_comm&0x00FFFF);
   dos.writeShort(errors_comm&0x00FFFF);
   dos.writeShort(errors_count1&0x00FFFF);
@@ -122,14 +128,14 @@ public byte[] encode() throws IOException {
   dos.flush();
   byte[] tmp = dos.toByteArray();
   for (int b=0; b<tmp.length; b++) buffer[b]=tmp[b];
-  int crc = MAVLinkCRC.crc_calculate_encode(buffer, 31);
+  int crc = MAVLinkCRC.crc_calculate_encode(buffer, 33);
   crc = MAVLinkCRC.crc_accumulate((byte) IMAVLinkCRC.MAVLINK_MESSAGE_CRCS[messageType], crc);
   byte crcl = (byte) (crc & 0x00FF);
   byte crch = (byte) ((crc >> 8) & 0x00FF);
-  buffer[37] = crcl;
-  buffer[38] = crch;
+  buffer[39] = crcl;
+  buffer[40] = crch;
   return buffer;
 }
 public String toString() {
-return "MAVLINK_MSG_ID_SYS_STATUS : " +   "  onboard_control_sensors_present="+onboard_control_sensors_present+  "  onboard_control_sensors_enabled="+onboard_control_sensors_enabled+  "  onboard_control_sensors_health="+onboard_control_sensors_health+  "  load="+load+  "  voltage_battery="+voltage_battery+  "  current_battery="+current_battery+  "  drop_rate_comm="+drop_rate_comm+  "  errors_comm="+errors_comm+  "  errors_count1="+errors_count1+  "  errors_count2="+errors_count2+  "  errors_count3="+errors_count3+  "  errors_count4="+errors_count4+  "  battery_remaining="+battery_remaining;}
+return "MAVLINK_MSG_ID_SYS_STATUS : " +   "  onboard_control_sensors_present="+onboard_control_sensors_present+  "  onboard_control_sensors_enabled="+onboard_control_sensors_enabled+  "  onboard_control_sensors_health="+onboard_control_sensors_health+  "  load="+load+  "  voltage_battery="+voltage_battery+  "  current_battery="+current_battery+  "  battery_discharged_mah="+battery_discharged_mah+  "  drop_rate_comm="+drop_rate_comm+  "  errors_comm="+errors_comm+  "  errors_count1="+errors_count1+  "  errors_count2="+errors_count2+  "  errors_count3="+errors_count3+  "  errors_count4="+errors_count4+  "  battery_remaining="+battery_remaining;}
 }

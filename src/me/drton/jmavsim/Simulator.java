@@ -117,7 +117,8 @@ public class Simulator {
         */
 
         // Open ports
-        serialMAVLinkPort.open("/dev/tty.usbmodem1", 230400, 8, 1, 0);
+        serialMAVLinkPort.open("/dev/serial/by-id/" +
+                "usb-3D_Robotics_PX4_FMU_v2.x_0-if00", 230400, 8, 1, 0);
         serialMAVLinkPort.sendRaw("\nsh /etc/init.d/rc.usb\n".getBytes());
         udpMavLinkPort.open(new InetSocketAddress(14555));
 

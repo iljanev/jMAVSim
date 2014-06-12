@@ -14,7 +14,7 @@ import java.io.FileNotFoundException;
 public class Target extends KinematicObject {
     private long startTime = 0;
     private GlobalPositionProjector gpsProjector = new GlobalPositionProjector();
-    private boolean shouldMessEP = true;
+    private boolean shouldMessEP = false;
 
     public Target(World world, double size) throws FileNotFoundException {
         super(world);
