@@ -86,7 +86,7 @@ public class Simulator {
         // Create target
         SimpleTarget target = new SimpleTarget(world, 0.3);
         long t = System.currentTimeMillis();
-        target.setTrajectory(new Vector3d(5.0, 0.0, -2.0), new Vector3d(5.0, 100.0, -2.0), t + 20000, t + 50000);
+        target.setTrajectory(new Vector3d(5.0, 0.0, -2.0), new Vector3d(5.0, 10000.0, -2.0), t + 20000, t + 5000000);
         connCommon.addNode(new MAVLinkTargetSystem(schema, 2, 1, target));
         world.addObject(target);
 

@@ -56,6 +56,8 @@ public class MAVLinkTargetSystem extends MAVLinkSystem {
             msg_target_time.set("vx", (float) p.velocity.x);
             msg_target_time.set("vy", (float) p.velocity.y);
             msg_target_time.set("vz", (float) p.velocity.z);
+            msg_target_time.set("eph", (int) (p.eph * 100));
+            msg_target_time.set("epv", (int) (p.epv * 100));
             sendMessage(msg_target_time);
         }
     }
